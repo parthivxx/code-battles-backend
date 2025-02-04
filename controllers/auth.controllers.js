@@ -1,9 +1,10 @@
 const User = require('../models/user.models.js');
 const bcrypt = require('bcryptjs');
 const axios = require('axios');
+const generateToken = require('../config/generateToken.js');
 
 const validCfHandle = async (username) =>{
-    const response = await axios.get(process.env.CF_API_ENDPOINT+`handles=${username}`);
+    const response = await axios.get(`${process.env.CF_API_ENDPOINT}/user.info?handles=${username}`);
     if(response.status == 400) return false;
     return response.data.result[0];
 }
