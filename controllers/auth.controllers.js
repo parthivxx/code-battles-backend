@@ -9,14 +9,16 @@ const validCfHandle = async (username) => {
     return response.data.result[0];
 }
 
-const registerController = async (req, res) => {
+const registerController = async (req, res , next) => {
     const { username, password } = req.body;
+    try{
     if (!username || !password) {
         res.status(400);
         throw new Error("Please enter all fields");
     }
     const cfUser = await validCfHandle(username);
     if (!cfUser) {
+        res.status(400);
         throw new Error("Please enter a valid Codeforces handle");
     }
     const profilePricture = cfUser.titlePhoto;
@@ -45,9 +47,12 @@ const registerController = async (req, res) => {
         res.status(400);
         throw new Error("Failed to create a user");
     }
+    } catch(error){
+        next(error);
+    }
 }
 
-const loginController = async (req, res) => {
+const loginController = async (req, res , next) => {
     const { username, password } = req.body;
     try {
         const user = await User.findOne({ username });
@@ -69,7 +74,7 @@ const loginController = async (req, res) => {
             throw new Error("Not registered");
         }
     } catch (error) {
-        throw new Error(error.message);
+        next(error);
     }
 }
 
